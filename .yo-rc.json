@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "16.18.1",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.4.1"
+    },
+    "version": "1.16.0",
+    "libraryName": "employee-of-the-month",
+    "libraryId": "38ef40cc-bac3-46e8-907b-81a8b97e6811",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "employee-of-the-month",
+    "solutionShortDescription": "employee-of-the-month description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

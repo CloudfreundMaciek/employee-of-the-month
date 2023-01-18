@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "employee-of-the-month-client-side-solution",
+    "id": "38ef40cc-bac3-46e8-907b-81a8b97e6811",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.16.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "employee-of-the-month description"
+      },
+      "longDescription": {
+        "default": "employee-of-the-month description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "employee-of-the-month Feature",
+        "description": "The feature that activates elements of the employee-of-the-month solution.",
+        "id": "97a98ec3-24f4-4ae8-b442-ba4e2d48f6a6",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/employee-of-the-month.sppkg"
+  }
+}
