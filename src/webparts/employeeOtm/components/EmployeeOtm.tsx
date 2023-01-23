@@ -1,4 +1,4 @@
-import { ActionButton, DefaultButton, Dropdown, IDropdownOption, IIconProps, Spinner, Stack, Text, TextField } from 'office-ui-fabric-react';
+import { ActionButton, DefaultButton, Dropdown, IDropdownOption, IIconProps, Image, Spinner, Stack, Text, TextField } from 'office-ui-fabric-react';
 import * as React from 'react';
 import { IEmployee } from '../EmployeeOtmWebPart';
 //import styles from './EmployeeOtm.module.scss';
@@ -132,14 +132,26 @@ export default class EmployeeOtm extends React.Component<IEmployeeOtmProps, IEmp
 
   public render(): any {
     let currentMode: any;
-
     switch(this.state.mode) {
       case 'opening':
-        currentMode = 
-        <Stack>
-          <Text>{this.state.eotm ? `${this.state.eotm.FirstName} ${this.state.eotm.LastName} has been chosen the best in this month. Reason: ${this.state.eotm.Eotm}` : "The employee of the month hasn't been choosed yet."}</Text>
-          <ActionButton iconProps={icon} text='Set eotm' onClick={()=>this.changeMode('choice')}/>
-        </Stack>;
+        let t1, t2;
+        if (this.state.eotm) {
+          t1 = <Text><strong>`${this.state.eotm.FirstName} ${this.state.eotm.LastName}`</strong> has been chosen the best employee this month!</Text>;
+          t2 = <Text>{this.state.eotm.Eotm}</Text>;
+        }
+        else {
+          t1 = <Text>The Employee of the month hasn't been chosen yet...</Text>;
+          t2 = <Text>Wait for the next selection and do your best!</Text>
+        }
+        currentMode = <>
+        <Stack horizontal={true}>
+          <Image src={this.state.eotm ? this.state.eotm.PicUrl : "../assets/eotm_pic.png"} />
+          <Stack>
+            {[t1, t2]}
+          </Stack>
+        </Stack>
+        <DefaultButton label='ds'/>
+        </>
         break;
 
       case 'choice':
