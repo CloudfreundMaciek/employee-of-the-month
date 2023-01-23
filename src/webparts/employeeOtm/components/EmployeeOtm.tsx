@@ -136,7 +136,7 @@ export default class EmployeeOtm extends React.Component<IEmployeeOtmProps, IEmp
       case 'opening':
         let t1, t2;
         if (this.state.eotm) {
-          t1 = <Text><strong>`${this.state.eotm.FirstName} ${this.state.eotm.LastName}`</strong> has been chosen the best employee this month!</Text>;
+          t1 = <Text><strong>{this.state.eotm.FirstName+' '+this.state.eotm.LastName}</strong> has been chosen the best employee this month!</Text>;
           t2 = <Text>{this.state.eotm.Eotm}</Text>;
         }
         else {
