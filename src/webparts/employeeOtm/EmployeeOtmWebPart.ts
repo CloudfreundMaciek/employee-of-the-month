@@ -45,10 +45,10 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
     const profiles = new Array<IEmployee>();
 
     for (const user of await sp.web.siteUsers()) {
-      if(user.PrincipalType != 1) continue;
+      if(user.PrincipalType !== 1) continue;
 
       let properties = await sp.profiles.getPropertiesFor(user.LoginName);
-      if (properties.hasOwnProperty('odata.null')) continue;
+      if (properties['odata.null']) continue;
       else properties = properties.UserProfileProperties;
 
       const profile: IEmployee = {FirstName: null, LastName: null, LoginName: null, Eotm: null, PicUrl: null};
@@ -81,13 +81,26 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
       }
       if (profile.FirstName) profiles.push(profile);
     }
-    console.log(profiles);
+    profiles.push({
+      FirstName: 'None',
+      LastName: '',
+      LoginName: null,
+      Eotm: null,
+      PicUrl: null
+    });
     return profiles;
   }
 
-  public async assign_eotm(prevEotm: IEmployee, newEotm: IEmployee, reason: string): Promise<IEmployee> {
+  public async assign_eotm(prevEotm: IEmployee, newEotm: IEmployee, reason: string): Promise<IEmployee | null> {
 
     const sp = spfi().using(SPFx(this.context));
+    if (newEotm.FirstName === 'None') {
+      return sp.profiles.setSingleValueProfileProperty(prevEotm.LoginName, 'Eotm', null)
+      .then(
+        ()=>null,
+        (reason)=>{ console.log(reason); return prevEotm; }
+      );
+    }
     if (prevEotm) {
       return sp.profiles.setSingleValueProfileProperty(prevEotm.LoginName, 'Eotm', null)
       .then(
@@ -135,7 +148,7 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
 
   public render(): void {
     const element: React.ReactElement<IEmployeeOtmProps> = React.createElement(
-      EmployeeOtm, {employees: this.employees, assign_eotm: this.assign_eotm}
+      EmployeeOtm, {employees: this.employees, assign_eotm: this.assign_eotm, rootLink: this.context.pageContext.web.absoluteUrl}
     );
 
     ReactDom.render(element, this.domElement);
