@@ -26,47 +26,52 @@ export interface IEmployeeOtmWebPartProps {
 }
 
 export interface IEmployee {
-  FirstName: string;
-  LastName: string;
+  Name: string;
   LoginName: string;
-  Eotm: string;
+  Reason: string;
   PicUrl: string;
 }
 
+export interface IRowEotm {
+  EmployeeId: number;
+  Month: string;
+  Reason: string;
+}
+
 export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeOtmWebPartProps> {
+  Eotm: IEmployee;
+
   constructor() {
     super();
 
-    this.assign_eotm = this.assign_eotm.bind(this);
+    this.assignEotm = this.assignEotm.bind(this);
   }
 
-  public async getEmployees(): Promise<Array<IEmployee>> {
-    const sp = spfi().using(SPFx(this.context));
-    const profiles = new Array<IEmployee>();
+  public async getEotm(): Promise<IEmployee> {
+  const sp = spfi().using(SPFx(this.context));
+
+    let endUser: any;
+    const eotms: Array<IRowEotm> = await sp.web.lists.getByTitle('Employees').items();
+    const currentMonth = ((new Date().getMonth())+1).toString();
+    for (const eotm of eotms) {
+      console.log(eotm);
+      if (eotm.Month === currentMonth) {
+        endUser = eotm;
+        break;
+      }
+    }
 
     for (const user of await sp.web.siteUsers()) {
-      if(user.PrincipalType !== 1) continue;
+      if(user.Id !== endUser.EmployeeId) continue;
+      else {
+        const profile: IEmployee = {Name: null, LoginName: null, Reason: null, PicUrl: null};
+        const properties = (await sp.profiles.getPropertiesFor(user.LoginName)).UserProfileProperties;
 
-      let properties = await sp.profiles.getPropertiesFor(user.LoginName);
-      if (properties['odata.null']) continue;
-      else properties = properties.UserProfileProperties;
-
-      const profile: IEmployee = {FirstName: null, LastName: null, LoginName: null, Eotm: null, PicUrl: null};
+        profile.Name = user.Title;
+        profile.Reason = endUser.Reason
 
       for (const property of properties) {
         switch (property.Key) {
-          case 'FirstName':
-            profile.FirstName = property.Value;
-            break;
-
-          case 'LastName':
-            profile.LastName = property.Value;
-            break;
-
-          case 'Eotm':
-            profile.Eotm = property.Value;
-            break;
-
           case 'AccountName':
             profile.LoginName = property.Value;
             break;
@@ -79,84 +84,40 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
             break;
         }
       }
-      if (profile.FirstName) profiles.push(profile);
+      return profile;
     }
-    profiles.push({
-      FirstName: 'None',
-      LastName: '',
-      LoginName: null,
-      Eotm: null,
-      PicUrl: null
-    });
-    return profiles;
+  }
   }
 
-  public async assign_eotm(prevEotm: IEmployee, newEotm: IEmployee, reason: string): Promise<IEmployee | null> {
+  public async getEmployees(): Promise<Array<IEmployee>> {
 
-    const sp = spfi().using(SPFx(this.context));
-    if (newEotm.FirstName === 'None') {
-      return sp.profiles.setSingleValueProfileProperty(prevEotm.LoginName, 'Eotm', null)
-      .then(
-        ()=>null,
-        (reason)=>{ console.log(reason); return prevEotm; }
-      );
+  const sp = spfi().using(SPFx(this.context));
+    const rawEmployees = await sp.profiles();
+    const employees = new Array<IEmployee>();
+    console.log(rawEmployees); employees;
+    for (const rawEmployee of rawEmployees) {
+      rawEmployee;
     }
-    if (prevEotm) {
-      return sp.profiles.setSingleValueProfileProperty(prevEotm.LoginName, 'Eotm', null)
-      .then(
-        () => {
-          return sp.profiles.setSingleValueProfileProperty(newEotm.LoginName, 'Eotm', reason)
-          .then(() => {
-            return {
-              FirstName: newEotm.FirstName,
-              LastName: newEotm.LastName,
-              LoginName: newEotm.LoginName,
-              Eotm: reason,
-              PicUrl: newEotm.PicUrl
-              };
-            },
-            (reason) => {
-              console.log(reason);
-              sp.profiles.setSingleValueProfileProperty(prevEotm.LoginName, 'Eotm', prevEotm.Eotm);
-              return prevEotm;
-            }
-          );
-        },
-        (reason) => {
-          console.log(reason);
-          return prevEotm;
-        }
-      );
-    }
-    else {
-      return sp.profiles.setSingleValueProfileProperty(newEotm.LoginName, 'Eotm', reason)
-      .then(() => {
-        return {
-          FirstName: newEotm.FirstName,
-          LastName: newEotm.LastName,
-          LoginName: newEotm.LoginName,
-          Eotm: reason,
-          PicUrl: newEotm.PicUrl
-        };
-      }
-      );
-    }
+    return employees;
+  }
 
+  public async assignEotm(prevEotm: IEmployee, newEotm: IEmployee, reason: string): Promise<IEmployee | null> {
+    return;
   }
 
   employees: Array<IEmployee>;
 
   public render(): void {
     const element: React.ReactElement<IEmployeeOtmProps> = React.createElement(
-      EmployeeOtm, {employees: this.employees, assign_eotm: this.assign_eotm, rootLink: this.context.pageContext.web.absoluteUrl}
+      EmployeeOtm, {Eotm: this.Eotm, assignEotm: this.assignEotm, rootLink: this.context.pageContext.web.absoluteUrl}
     );
 
     ReactDom.render(element, this.domElement);
   }
 
   protected async onInit(): Promise<void>{
-    this.employees = await this.getEmployees();
-    return Promise.resolve();
+    this.Eotm = await this.getEotm();
+    this.getEmployees();
   }
 
   protected onDispose(): void {
