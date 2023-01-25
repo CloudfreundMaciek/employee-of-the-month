@@ -135,28 +135,15 @@ export default class EmployeeOtm extends React.Component<IEmployeeOtmProps, IEmp
     let currentMode: JSX.Element;
     switch(this.state.mode) {
       case 'opening':
-        const stackTokenStyles: IStackTokens = {childrenGap: '5px'};
-        let t1, t2;
-        if (this.state.eotm) {
-          t1 = <Text><strong>{this.state.eotm.FirstName+' '+this.state.eotm.LastName}</strong> has been chosen the best employee this month!</Text>;
-          t2 = <Text>{this.state.eotm.Eotm}</Text>;
-        }
-        else {
-          t1 = <Text>The Employee of the month hasn't been chosen yet...</Text>;
-          t2 = <Text>Wait for the next selection and do your best!</Text>;
-        }
-        currentMode = <>
-        <Stack style={{height: '200px', width: 'fit-content', border: '2px solid #0078d4', borderRadius: '10px', padding: '5px'}} horizontal={true} tokens={stackTokenStyles}>
-          <div style={{position: 'relative'}}>
-            <Image style={{height: '185px'}} src={`${this.props.rootLink}/SiteAssets/eotm_photographs/eotm_pic.png`} />
-            <Image style={{position: 'absolute', top: '11px', left: ' 32px'}} src={this.state.eotm ? this.state.eotm.PicUrl : `${this.props.rootLink}/SiteAssets/eotm_photographs/blank_user.jpg`} />
+        currentMode = 
+          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: '500px', height: '400px', background: 'white', position: 'relative', border: '3px solid green', borderRadius: '10px'}}>
+            <img style={{border: '2px solid gold', borderRadius: '10px', marginTop: '16px', width: '129px'}} src={this.state.eotm ? this.state.eotm.PicUrl : this.props.rootLink+'/SiteAssets/eotm_photographs/blank_user.jpg'} />
+            <p style={{fontSize: '28px', fontWeight: 'bold', margin: '0px auto'}}>EMPLOYEE OF THE MONTH</p>
+            <div style={{width: '80%', border: '1px solid'}}></div>
+            <p style={{margin: '0px', marginTop: '10px', fontSize: '20px'}}><strong>{this.state.eotm ? this.state.eotm.FirstName+' '+this.state.eotm.LastName : '. . .'}</strong></p>
+            <p style={{fontSize: '16px', width: '80%', marginBottom: 'auto', textAlign: 'justify', hyphens: 'auto'}}>{this.state.eotm ? this.state.eotm.Eotm : "The employee of the month hasn't been chosen yet.. wait on the next selection and until then... do your best B-D"}</p>
+            <PrimaryButton text='Choose the employee' onClick={()=>this.changeMode('choice')} style={{marginBottom: '16px', fontSize: '14px'}} />
           </div>
-          <Stack style={{position: 'relative', width: '185px', height: '100%'}}>
-            {t1} <Separator/> {t2}
-            <PrimaryButton style={{position: 'absolute', bottom: '0px'}} text='Choose the employee' onClick={()=>this.changeMode('choice')}/>
-          </Stack>
-        </Stack>
-        </>
         break;
 
       case 'choice':

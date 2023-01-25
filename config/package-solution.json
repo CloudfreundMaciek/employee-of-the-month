@@ -3,7 +3,7 @@
   "solution": {
     "name": "employee-of-the-month-client-side-solution",
     "id": "38ef40cc-bac3-46e8-907b-81a8b97e6811",
-    "version": "1.0.0.0",
+    "version": "1.0.4.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
