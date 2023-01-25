@@ -1,4 +1,4 @@
-import { DefaultButton, Dropdown, IDropdownOption, IIconProps, Image, IStackTokens, PrimaryButton, Separator, Spinner, Stack, Text, TextField } from 'office-ui-fabric-react';
+import { DefaultButton, Dropdown, IDropdownOption, IIconProps, PrimaryButton, Spinner, Stack, TextField } from 'office-ui-fabric-react';
 import * as React from 'react';
 import { IEmployee } from '../EmployeeOtmWebPart';
 //import styles from './EmployeeOtm.module.scss';
