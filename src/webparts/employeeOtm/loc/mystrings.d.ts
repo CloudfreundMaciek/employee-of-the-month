@@ -1,5 +1,11 @@
 declare interface IEmployeeOtmWebPartStrings {
+  PropertyPaneListName: string;
   PropertyPaneDescription: string;
+  PropertyPaneEmployee: string;
+  PropertyPaneMonth: string;
+  PropertyPaneReason: string;
+  PropertyPanePanelButton: string;
+  PropertyPaneChoiceButton: string;
   BasicGroupName: string;
   DescriptionFieldLabel: string;
   AppLocalEnvironmentSharePoint: string;

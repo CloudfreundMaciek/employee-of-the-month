@@ -1,6 +1,12 @@
 define([], function() {
   return {
-    "PropertyPaneDescription": "Description",
+    "PropertyPaneListName": "List's name",
+    "PropertyPaneMonth": "Award's month",
+    "PropertyPaneEmployee": "Employee to award",
+    "PropertyPaneReason": "Reason for the award",
+    "PropertyPanePanelButton": "Make a choice",
+    "PropertyPaneChoiceButton": "Award the employee",
+    "PropertyPaneDescription": "Choose the list to save the previous awarded employees or set apart a new one.",
     "BasicGroupName": "Group Name",
     "DescriptionFieldLabel": "Description Field",
     "AppLocalEnvironmentSharePoint": "The app is running on your local environment as SharePoint web part",

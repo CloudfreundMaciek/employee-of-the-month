@@ -18,11 +18,15 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
     "group": { "default": "Advanced" },
-    "title": { "default": "EmployeeOTM" },
-    "description": { "default": "EmployeeOTM description" },
+    "title": { "default": "Employee of the month" },
+    "description": { "default": "Award your employees by choosing the most contributed one!" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "EmployeeOTM"
+      "listName": null,
+      "month": null,
+      "employee": null,
+      "reason": null,
+      "collapsion": true
     }
   }]
 }
