@@ -1,11 +1,7 @@
 define([], function() {
   return {
     "PropertyPaneListName": "List's name",
-    "PropertyPaneMonth": "Award's month",
-    "PropertyPaneEmployee": "Employee to award",
-    "PropertyPaneReason": "Reason for the award",
-    "PropertyPanePanelButton": "Make a choice",
-    "PropertyPaneChoiceButton": "Award the employee",
+    "PropertyPaneButton": "Create the list",
     "PropertyPaneDescription": "Choose the list to save the previous awarded employees or set apart a new one.",
     "BasicGroupName": "Group Name",
     "DescriptionFieldLabel": "Description Field",

@@ -3,6 +3,7 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
+  PropertyPaneButton,
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
@@ -17,16 +18,18 @@ import "@pnp/sp/lists";
 import "@pnp/sp/webs";
 import "@pnp/sp/profiles";
 import "@pnp/sp/site-users";
+import "@pnp/sp/fields/list";
+import "@pnp/sp/fields";
+import "@pnp/sp/views/list";
+
 
 import { spfi } from '@pnp/sp/fi';
 import { SPFx } from '@pnp/sp/behaviors/spfx';
+import { IListEnsureResult } from '@pnp/sp/lists';
 
 export interface IEmployeeOtmWebPartProps {
   listName: string;
-  month: string;
-  employee: string;
-  reason: string;
-  collapsion: boolean;
+  listCreated: boolean;
 }
 
 export interface IEmployee {
@@ -45,8 +48,8 @@ export interface IRowEotm {
 
 export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeOtmWebPartProps> {
   Eotm: IEmployee = null;
-  listNameExistance: boolean = true;
-  prevListName: string;
+  //listNameExistance: boolean = true;
+  //prevListName: string;
   
   private async getEotm(): Promise<IEmployee | null> {
     if ( !this.properties.listName ) return null;
@@ -94,19 +97,14 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
 
   public render(): void {
     const element: React.ReactElement<IEmployeeOtmProps> = React.createElement(
-      EmployeeOtm, {Eotm: this.Eotm, rootLink: this.context.pageContext.web.absoluteUrl}
+      EmployeeOtm, {Eotm: this.Eotm, rootLink: this.context.pageContext.web.absoluteUrl, TeamsContext: this.context.sdks.microsoftTeams}
     );
 
     ReactDom.render(element, this.domElement);
   }
 
   protected async onInit(): Promise<void>{
-    this.checkListName = this.checkListName.bind(this);
-    this.prevListName = this.properties.listName;
-    this.properties.employee = null;
-    this.properties.month = null;
-    this.properties.reason = null;
-    this.properties.collapsion = true;
+    this.createList = this.createList.bind(this);
     this.Eotm = await this.getEotm();
   }
 
@@ -118,11 +116,7 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
     return Version.parse('1.0');
   }
 
-  protected async onPropertyPaneConfigurationComplete(): Promise<void> {
-      this.Eotm = await this.getEotm();
-      this.render();
-  }
-
+/*
   protected async checkListName (listName: string): Promise<string> {
     if (!listName) {
       this.prevListName = null;
@@ -143,6 +137,29 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
         }
       );
   }
+  */
+
+  private async createList () {
+    if (this.properties.listName) {
+      this.properties.listCreated = true;
+      const sp = spfi().using(SPFx(this.context));
+      const listName = this.properties.listName;
+      const listRes: IListEnsureResult = await sp.web.lists.ensure(listName);
+      if (listRes.created) {
+        await sp.web.lists.getByTitle(listName).fields.getByTitle('Title').update({Required: false});
+  
+        await sp.web.lists.getByTitle(listName).fields.addUser  ('Employee', {Required: true});
+        await sp.web.lists.getByTitle(listName).fields.addChoice('Month', {Required: true, Choices: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']});
+        await sp.web.lists.getByTitle(listName).fields.addText  ('Reason', {Required: true});
+  
+        await sp.web.lists.getByTitle(listName).defaultView.fields.removeAll();
+
+        await sp.web.lists.getByTitle(listName).defaultView.fields.add('Employee');
+        await sp.web.lists.getByTitle(listName).defaultView.fields.add('Month');
+        await sp.web.lists.getByTitle(listName).defaultView.fields.add('Reason');
+      }
+    }
+  }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
@@ -151,15 +168,21 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
           header: {
             description: strings.PropertyPaneDescription
           },
-          groups: [
+          groups: [ 
             {
               groupFields: [
                 PropertyPaneTextField('listName', {
                   label: strings.PropertyPaneListName,
-                  onGetErrorMessage: this.checkListName
-                })
+                  disabled: this.properties.listCreated
+                }),
+                PropertyPaneButton('', {
+                  text: strings.PropertyPaneButton,
+                  disabled: this.properties.listCreated,
+                  onClick: this.createList
+                  }
+                )
               ]
-            }
+            } 
           ]
         }
       ]

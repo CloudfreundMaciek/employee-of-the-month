@@ -23,10 +23,7 @@
     "officeFabricIconFontName": "Page",
     "properties": {
       "listName": null,
-      "month": null,
-      "employee": null,
-      "reason": null,
-      "collapsion": true
+      "listCreated": false
     }
   }]
 }
