@@ -142,9 +142,11 @@ export default class EmployeeOtmWebPart extends BaseClientSideWebPart<IEmployeeO
   private async createList () {
     if (this.properties.listName) {
       this.properties.listCreated = true;
+
       const sp = spfi().using(SPFx(this.context));
       const listName = this.properties.listName;
       const listRes: IListEnsureResult = await sp.web.lists.ensure(listName);
+      
       if (listRes.created) {
         await sp.web.lists.getByTitle(listName).fields.getByTitle('Title').update({Required: false});
   
